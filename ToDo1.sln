@@ -1,25 +1,80 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36603.0 d17.14
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo1", "ToDo1\ToDo1.csproj", "{DB58EF30-641C-4410-82BE-EC3AFE94D744}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB58EF30-641C-4410-82BE-EC3AFE94D744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB58EF30-641C-4410-82BE-EC3AFE94D744}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB58EF30-641C-4410-82BE-EC3AFE94D744}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB58EF30-641C-4410-82BE-EC3AFE94D744}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A095ABAD-2A99-472A-A990-2C5B49CE429E}
-	EndGlobalSection
-EndGlobal
+﻿﻿using StudentJsonTxt.Models;
+using System.Collections.Generic;
+using System.IO;
+
+namespace StudentJsonTxt.Repositories
+{
+    public class StudentRepositoryTxt
+    {
+        private readonly string _filePath;
+        public StudentRepositoryTxt(string filePath = "students.txt")
+        {
+            _filePath = filePath;
+        }
+
+        public void Save(List<Student> students)
+        {
+            var lines = new List<string>();
+            foreach (var s in students)
+            {
+                lines.Add($"{s.Name};{s.Grade}");
+            }
+            File.AppendAllLines(_filePath, lines);  // Дописва редове към файл
+           // File.WriteAllLines(_filePath, lines); // Презаписва целия файл
+        }
+
+public class Student
+{
+    public string Name { get; set; }
+    public double Grade { get; set; }
+
+    public Student() { }
+
+    public Student(string name, double grade)
+    {
+        Name = name;
+        Grade = grade;
+    }
+}
+
+
+      public List<Student> Load()
+{
+    List<Student> list = new List<Student>();
+
+    if (!File.Exists(_filePath))
+        return list;
+
+    string[] lines = File.ReadAllLines(_filePath);
+
+    foreach (string line in lines)
+    {
+        if (line.Trim().Length == 0)
+            continue;
+
+        string[] parts = line.Split(';');
+
+        if (parts.Length < 2)
+            continue;
+
+        string name = parts[0];
+
+        // Заменяме точка с запетая, за да може double да се парсне
+        string gradeText = parts[1].Replace(".", ",");
+
+        double grade = double.Parse(gradeText);
+
+        Student s = new Student();
+        s.Name = name;
+        s.Grade = grade;
+
+        list.Add(s);
+    }
+
+    return list;
+
+
+
+    }
+ )
+} 
